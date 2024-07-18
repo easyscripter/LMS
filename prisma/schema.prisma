@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
+  role      String
+  courses   Course[]   @relation("InstructorCourses")
+  enrollments Enrollment[]
+  submissions Submission[]
+}
+
+model Course {
+  id            Int          @id @default(autoincrement())
+  title         String
+  description   String?
+  instructorId  Int
+  instructor    User         @relation("InstructorCourses", fields: [instructorId], references: [id])
+  modules       Module[]
+  enrollments   Enrollment[]
+  assignments   Assignment[]
+}
+
+model Module {
+  id        Int       @id @default(autoincrement())
+  title     String
+  courseId  Int
+  course    Course    @relation(fields: [courseId], references: [id])
+  lessons   Lesson[]
+}
+
+model Lesson {
+  id        Int       @id @default(autoincrement())
+  title     String
+  content   String?
+  moduleId  Int
+  module    Module    @relation(fields: [moduleId], references: [id])
+}
+
+model Enrollment {
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  courseId  Int
+  user      User      @relation(fields: [userId], references: [id])
+  course    Course    @relation(fields: [courseId], references: [id])
+}
+
+model Assignment {
+  id        Int       @id @default(autoincrement())
+  title     String
+  description String?
+  courseId  Int
+  course    Course    @relation(fields: [courseId], references: [id])
+  submissions Submission[]
+}
+
+model Submission {
+  id          Int       @id @default(autoincrement())
+  assignmentId Int
+  userId      Int
+  content     String?
+  submittedAt DateTime
+  assignment  Assignment @relation(fields: [assignmentId], references: [id])
+  user        User      @relation(fields: [userId], references: [id])
+  grade       Grade?
+}
+
+model Grade {
+  id          Int       @id @default(autoincrement())
+  submissionId Int      @unique
+  score       Float
+  gradedAt    DateTime
+  submission  Submission @relation(fields: [submissionId], references: [id])
+}
