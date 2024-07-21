@@ -13,26 +13,52 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.Text
+  access_token       String? @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.Text
+  session_state      String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
 model User {
-  id        Int        @id @default(autoincrement())
+  id        String        @id @default(cuid())
   name      String
-  email     String     @unique
+  username  String     @unique
+  email     String?    @unique
   password  String
   role      String
   courses   Course[]   @relation("InstructorCourses")
   enrollments Enrollment[]
   submissions Submission[]
+  accounts    Account[]
+
+  @@map("users")
 }
 
 model Course {
   id            Int          @id @default(autoincrement())
   title         String
   description   String?
-  instructorId  Int
+  instructorId  String
   instructor    User         @relation("InstructorCourses", fields: [instructorId], references: [id])
   modules       Module[]
   enrollments   Enrollment[]
   assignments   Assignment[]
+
+  @@map("courses")
 }
 
 model Module {
@@ -41,6 +67,8 @@ model Module {
   courseId  Int
   course    Course    @relation(fields: [courseId], references: [id])
   lessons   Lesson[]
+
+  @@map("modules")
 }
 
 model Lesson {
@@ -49,14 +77,18 @@ model Lesson {
   content   String?
   moduleId  Int
   module    Module    @relation(fields: [moduleId], references: [id])
+
+  @@map("lessons")
 }
 
 model Enrollment {
   id        Int       @id @default(autoincrement())
-  userId    Int
+  userId    String
   courseId  Int
   user      User      @relation(fields: [userId], references: [id])
   course    Course    @relation(fields: [courseId], references: [id])
+
+  @@map("enrollments")
 }
 
 model Assignment {
@@ -66,17 +98,21 @@ model Assignment {
   courseId  Int
   course    Course    @relation(fields: [courseId], references: [id])
   submissions Submission[]
+
+  @@map("assignments")
 }
 
 model Submission {
   id          Int       @id @default(autoincrement())
   assignmentId Int
-  userId      Int
+  userId      String
   content     String?
   submittedAt DateTime
   assignment  Assignment @relation(fields: [assignmentId], references: [id])
   user        User      @relation(fields: [userId], references: [id])
   grade       Grade?
+
+  @@map("submissions")
 }
 
 model Grade {
@@ -85,4 +121,6 @@ model Grade {
   score       Float
   gradedAt    DateTime
   submission  Submission @relation(fields: [submissionId], references: [id])
+
+  @@map("grades")
 }

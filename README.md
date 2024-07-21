@@ -4,7 +4,7 @@ This project of learning management system for control teaching students of russ
 
 ## Getting Started
 
-First, run the development server:
+First, instsall packages with ```npm i``` and then run the development server:
 
 ```bash
 npm run dev

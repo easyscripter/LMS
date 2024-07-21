@@ -1,7 +1,10 @@
 import React from 'react';
+import { LoginForm } from '@/components/auth/loginForm';
 
 const SignInPage = () => {
-    return ( <div>Sign in</div> );
+    return (
+        <LoginForm/>
+    );
 }
  
 export default SignInPage;
