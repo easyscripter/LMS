@@ -12,18 +12,18 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { loginSchema } from '@/validationSchemas'
 
-const formSchema = z.object({
-    username: z.string().min(1, { message: "Пожалуйста, введите имя пользователя" }),
-    password: z.string().min(1, { message: "Пожалуйста, введите пароль" }),
-})
+export type LoginFormData = z.infer<typeof loginSchema>;
 
-type LoginFormData = z.infer<typeof formSchema>
+type LoginFormProps = {
+    onLogin: (data: LoginFormData) => void
+}
 
-export const LoginForm = () => {
+export const LoginForm = ({onLogin}: LoginFormProps) => {
 
     const form = useForm<LoginFormData>({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(loginSchema),
         defaultValues: {
             username: "",
             password: "",
@@ -31,7 +31,7 @@ export const LoginForm = () => {
     })
 
     const onSubmit = (data: LoginFormData) => {
-        console.log(data)
+        onLogin(data);
     }
 
 
@@ -53,7 +53,7 @@ export const LoginForm = () => {
                     <FormItem>
                         <FormLabel>Пароль:</FormLabel>
                         <FormControl>
-                            <Input placeholder="Пароль" {...field} />
+                            <Input type="password" placeholder="Пароль" {...field} />
                         </FormControl>
                          {form.formState.errors.password && <FormMessage>{form.formState.errors.password.message}</FormMessage>}
                     </FormItem>
