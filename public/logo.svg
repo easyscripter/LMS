@@ -1,0 +1,10 @@
+<svg id="logo-87" width="250" height="100" viewBox="0 0 250 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Computer Monitor -->
+  <rect x="10" y="20" width="100" height="60" fill="#007DFC" rx="8" ry="8"/>
+  <rect x="20" y="30" width="80" height="40" fill="white" rx="5" ry="5"/>
+  <rect x="45" y="70" width="30" height="10" fill="#007DFC" rx="2" ry="2"/>
+  <rect x="35" y="80" width="50" height="10" fill="#007DFC" rx="2" ry="2"/>
+
+  <!-- LMS Text -->
+  <text x="130" y="65" font-family="Arial" font-size="50" fill="#007DFC">LMS</text>
+</svg>
