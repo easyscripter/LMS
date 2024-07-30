@@ -61,3 +61,5 @@ class CourseService {
     return course;
   }
 }
+
+export const courseService = new CourseService();
