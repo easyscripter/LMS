@@ -1,6 +1,7 @@
 export enum Routes {
-  DASHBOARD = '/',
-  COURSES = '/courses',
-  SETTINGS = '/settings',
+  DASHBOARD = '/dashboard',
+  COURSES = '/dashboard/courses',
+  SETTINGS = '/dashboard/settings',
   SIGN_IN = '/sign-in',
+  MY_COURSES = '/dashboard/my-courses',
 }

@@ -1,6 +1,6 @@
 import { Routes } from '@/enums';
 import { SidebarRoute } from '@/types';
-import { Compass, Layout, Settings } from 'lucide-react';
+import { Compass, LaptopMinimal, Layout, Settings } from 'lucide-react';
 
 export const sideBarRoutes: SidebarRoute[] = [
   {
@@ -17,5 +17,11 @@ export const sideBarRoutes: SidebarRoute[] = [
     icon: Settings,
     title: 'Настройки',
     path: Routes.SETTINGS,
+  },
+  {
+    icon: LaptopMinimal,
+    title: 'Мои курсы',
+    path: Routes.MY_COURSES,
+    isTeacherRoute: true,
   },
 ];
