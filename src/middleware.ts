@@ -1,25 +1,22 @@
+import { getToken } from 'next-auth/jwt';
 import { withAuth } from 'next-auth/middleware';
-import { NextResponse } from 'next/server';
+import { NextFetchEvent, NextRequest, NextResponse } from 'next/server';
 import { Routes } from './enums';
-import { Role } from '@prisma/client';
 
-export default withAuth(
-  function middleware(req) {
-    const { role } = req.nextauth.token ?? {};
+export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+  const token = await getToken({ req });
+  const isAuthenticated = !!token;
 
-    if (!req.nextauth.token) {
-      return NextResponse.redirect(new URL(Routes.SIGN_IN, req.url));
-    }
+  if (req.nextUrl.pathname.startsWith(Routes.SIGN_IN) && isAuthenticated) {
+    return NextResponse.redirect(new URL(Routes.DASHBOARD, req.url));
+  }
 
-    return NextResponse.next();
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => token?.role === Role.STUDENT,
+  const authMiddleware = await withAuth({
+    pages: {
+      signIn: Routes.SIGN_IN,
     },
-  },
-);
+  });
 
-export const config = {
-  matcher: ['/dashboard/:path*'], // Укажите защищенные пути
-};
+  // @ts-expect-error
+  return authMiddleware(req, event);
+}

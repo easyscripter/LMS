@@ -18,10 +18,4 @@ export const sideBarRoutes: SidebarRoute[] = [
     title: 'Настройки',
     path: Routes.SETTINGS,
   },
-  {
-    icon: LaptopMinimal,
-    title: 'Мои курсы',
-    path: Routes.MY_COURSES,
-    isTeacherRoute: true,
-  },
 ];

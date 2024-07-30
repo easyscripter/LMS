@@ -5,10 +5,11 @@ import { Logo } from './logo';
 import { SidebarRoutes } from './sidebar-routes';
 import { LogOut } from 'lucide-react';
 import { signOut } from 'next-auth/react';
+import { Routes } from '@/enums';
 
 export const Sidebar = () => {
   const logOut = () => {
-    signOut({ callbackUrl: '/sign-in' });
+    signOut();
   };
   return (
     <div className="flex h-full flex-col overflow-y-auto border-r bg-slate-200 shadow-md">
