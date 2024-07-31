@@ -39,13 +39,19 @@ model User {
   username  String     @unique
   email     String?    @unique
   password  String
-  role      String
+  role      Role       @default(STUDENT)
   courses   Course[]   @relation("InstructorCourses")
   enrollments Enrollment[]
   submissions Submission[]
   accounts    Account[]
 
   @@map("users")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  TEACHER
 }
 
 model Course {
