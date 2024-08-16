@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name     String  @default("Не указано")
+  surname  String
+  lastname String?
+
+  username String  @unique
+  email    String? @unique
+  password String
+
+  role        Role         @default(STUDENT)
+  enrollments Enrollment[]
+  submission  Submission[]
+
+  @@map("user")
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title       String
+  description String
+  image       String @default("/uploads/no-course-image.png")
+
+  lessons     Lesson[]
+  enrollments Enrollment[]
+
+  @@map("course")
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title    String
+  content  String
+  videoUrl String? @map("video_url")
+
+  courseId String @map("course_id")
+  course   Course @relation(fields: [courseId], references: [id])
+  quiz     Quiz[]
+
+  @@map("lesson")
+}
+
+model Quiz {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  title String
+
+  lessonId   String       @map("lesson_id")
+  lesson     Lesson       @relation(fields: [lessonId], references: [id])
+  question   Question[]
+  submission Submission[]
+
+  @@map("quiz")
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  text String
+  type QuestionType @default(TRUE_FALSE)
+
+  quizId String   @map("quiz_id")
+  quiz   Quiz     @relation(fields: [quizId], references: [id])
+  answer Answer[]
+
+  @@map("question")
+}
+
+model Answer {
+  id        String   @id @default(uuid())
+  text      String
+  isCorrect Boolean  @default(false) @map("is_correct")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  questionId String   @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id])
+
+  @@map("answer")
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  userId   String @map("user_id")
+  user     User   @relation(fields: [userId], references: [id])
+  courseId String @map("course_id")
+  course   Course @relation(fields: [courseId], references: [id])
+
+  @@map("enrollment")
+}
+
+model Submission {
+  id        String   @id @default(uuid())
+  score     Float
+  createdAt DateTime @default(now())
+
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id])
+  quizId String @map("quiz_id")
+  quiz   Quiz   @relation(fields: [quizId], references: [id])
+
+  @@map("submission")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  TEACHER
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TRUE_FALSE
+  SHORT_ANSWER
+}
