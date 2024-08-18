@@ -13,8 +13,8 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   name     String  @default("Не указано")
-  surname  String
-  lastname String?
+  surname  String  @default("Не указано")
+  lastname String? @default("Не указано")
 
   username String  @unique
   email    String? @unique
