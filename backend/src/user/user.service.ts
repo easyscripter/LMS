@@ -42,4 +42,67 @@ export class UserService {
 			}
 		});
 	}
+
+	async update(userId: string, dto: AuthDTO) {
+		return await this.prisma.user.update({
+			where: {
+				id: userId
+			},
+			data: {
+				name: dto.name,
+				email: dto.email,
+				password: await hash(dto.password),
+				username: dto.username,
+				surname: dto.surname
+			}
+		});
+	}
+
+	async getUserProfile(userId: string) {
+		return await this.prisma.user.findUnique({
+			where: {
+				id: userId
+			},
+			select: {
+				id: true,
+				name: true,
+				email: true,
+				username: true,
+				surname: true,
+				lastname: true,
+				role: true
+			}
+		});
+	}
+
+	async getUserCourses(userId: string) {
+		const courses = await this.prisma.enrollment.findMany({
+			where: {
+				userId
+			},
+			include: {
+				course: true
+			}
+		});
+		return courses;
+	}
+
+	async getTeacherCourses(userId: string) {
+		const courses = await this.prisma.course.findMany({
+			where: {
+				lessons: {
+					some: {
+						course: {
+							enrollments: {
+								some: {
+									userId
+								}
+							}
+						}
+					}
+				}
+			}
+		});
+		return courses;
+	}
 }
