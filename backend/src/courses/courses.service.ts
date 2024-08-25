@@ -7,7 +7,7 @@ export class CoursesService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getCourses(searchTerm?: string) {
-		if (searchTerm) return this.getSearchTermFilter(searchTerm);
+		if (searchTerm) this.getSearchTermFilter(searchTerm);
 		const courses = await this.prisma.course.findMany({
 			orderBy: {
 				createdAt: 'desc'
