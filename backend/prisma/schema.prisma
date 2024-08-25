@@ -25,6 +25,7 @@ model User {
   submission  Submission[]
 
   @@map("user")
+  Course Course[]
 }
 
 model Course {
@@ -38,6 +39,9 @@ model Course {
 
   lessons     Lesson[]
   enrollments Enrollment[]
+
+  teacherId String @map("teacher_id")
+  teacher   User   @relation(fields: [teacherId], references: [id])
 
   @@map("course")
 }

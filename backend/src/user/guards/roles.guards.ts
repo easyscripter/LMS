@@ -3,18 +3,20 @@ import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
 
 @Injectable()
-export class RolesGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
 	constructor(private reflector: Reflector) {}
 
-	canActivate(context: ExecutionContext): boolean {
-		const requiredRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
-			context.getHandler(),
-			context.getClass()
-		]);
-		if (!requiredRoles) {
+	matchRules(roles: Role[], userRole: Role) {
+		return roles.some(role => role === userRole);
+	}
+
+	canActivate(context: ExecutionContext) {
+		const roles = this.reflector.get<Role[]>('roles', context.getHandler());
+		if (!roles) {
 			return true;
 		}
-		const { user } = context.switchToHttp().getRequest();
-		return requiredRoles.includes(user?.role);
+		const request = context.switchToHttp().getRequest();
+		const user = request.user;
+		return this.matchRules(roles, user?.role);
 	}
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { hash } from 'argon2';
-import { AuthDTO } from 'src/dto/auth.dto';
+import { AuthDTO } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -58,6 +58,17 @@ export class UserService {
 		});
 	}
 
+	async delete(userId: string) {
+		return await this.prisma.user.delete({
+			where: {
+				id: userId
+			},
+			include: {
+				enrollments: true
+			}
+		});
+	}
+
 	async getUserProfile(userId: string) {
 		return await this.prisma.user.findUnique({
 			where: {
@@ -90,17 +101,10 @@ export class UserService {
 	async getTeacherCourses(userId: string) {
 		const courses = await this.prisma.course.findMany({
 			where: {
-				lessons: {
-					some: {
-						course: {
-							enrollments: {
-								some: {
-									userId
-								}
-							}
-						}
-					}
-				}
+				teacherId: userId
+			},
+			include: {
+				lessons: true
 			}
 		});
 		return courses;

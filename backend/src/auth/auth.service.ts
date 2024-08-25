@@ -7,7 +7,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
-import { AuthDTO } from 'src/dto/auth.dto';
+import { AuthDTO } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserService } from 'src/user/user.service';
 
