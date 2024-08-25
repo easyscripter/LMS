@@ -7,8 +7,8 @@ export class CoursesService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async getCourses(searchTerm?: string) {
-		if (searchTerm) this.getSearchTermFilter(searchTerm);
-		const courses = await this.prisma.course.findMany({
+		if (searchTerm) return await this.getSearchTermFilter(searchTerm);
+		return this.prisma.course.findMany({
 			orderBy: {
 				createdAt: 'desc'
 			},
@@ -17,7 +17,6 @@ export class CoursesService {
 				enrollments: true
 			}
 		});
-		return courses;
 	}
 
 	async getCourseById(id: string) {
@@ -61,20 +60,22 @@ export class CoursesService {
 		});
 	}
 
-	private getSearchTermFilter(searchTerm: string) {
-		return {
-			OR: [
-				{
-					title: {
-						contains: searchTerm,
-						mode: 'insensitive'
-					},
-					description: {
-						contains: searchTerm,
-						mode: 'insensitive'
+	private async getSearchTermFilter(searchTerm: string) {
+		return this.prisma.course.findMany({
+			where: {
+				OR: [
+					{
+						title: {
+							contains: searchTerm,
+							mode: 'insensitive'
+						},
+						description: {
+							contains: searchTerm,
+							mode: 'insensitive'
+						}
 					}
-				}
-			]
-		};
+				]
+			}
+		});
 	}
 }
