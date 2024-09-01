@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import './globals.css';
-import { Toaster } from '@/components/ui/toaster';
+import { SITE_DESCRIPTION, SITE_NAME } from '@/constants/seo.constants';
+import { Providers } from './providers';
 
 const nunito = Nunito({
   subsets: ['cyrillic'],
@@ -10,8 +11,11 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
-  title: 'LMS APP',
-  description: '',
+  title: {
+    absolute: SITE_NAME,
+    template: `%s - ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
 };
 
 export default function RootLayout({
@@ -20,10 +24,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body className={nunito.className}>
-        {children}
-        <Toaster />
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

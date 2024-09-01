@@ -1,7 +1,7 @@
 import {
 	BadRequestException,
+	ForbiddenException,
 	Injectable,
-	NotFoundException,
 	UnauthorizedException
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -10,6 +10,7 @@ import { Response } from 'express';
 import { AuthDTO } from 'src/auth/dto/auth.dto';
 import { PrismaService } from 'src/prisma.service';
 import { UserService } from 'src/user/user.service';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -24,6 +25,7 @@ export class AuthService {
 
 	async login(dto: AuthDTO) {
 		const user = await this.validateUser(dto);
+		if (!user) throw new ForbiddenException('Invalid username or password');
 		if ('id' in user) {
 			const tokens = this.issueTokens(user.id);
 			return { user, ...tokens };
@@ -63,8 +65,12 @@ export class AuthService {
 
 	private async validateUser(dto: AuthDTO) {
 		const user = await this.userService.getUserByUsername(dto.username);
-		if (!user) return new NotFoundException('User not found');
-		return user;
+		if (user && (await bcrypt.compare(dto.password, user.password))) {
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			const { password, ...result } = user;
+			return result;
+		}
+		return null;
 	}
 
 	addRefreshTokenToResponse(res: Response, refreshToken: string) {

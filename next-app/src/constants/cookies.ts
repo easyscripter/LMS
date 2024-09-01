@@ -1,1 +1,2 @@
-export const COOKIES_USER = 'user';
+export const ACCESS_TOKEN = 'accessToken';
+export const REFRESH_TOKEN = 'refreshToken';
