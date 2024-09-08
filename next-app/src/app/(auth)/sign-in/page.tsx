@@ -1,19 +1,16 @@
-'use client';
-import React, { useState } from 'react';
-import { LoginForm, LoginFormData } from '@/components/auth/loginForm';
-import { useRouter } from 'next/navigation';
-import { Routes } from '@/enums';
+import { LoginForm } from '@/components/LoginForm/LoginForm';
+
+export const metadata = {
+  title: 'Авторизация',
+};
 
 const SignInPage = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-  const handleLogin = async (data: LoginFormData) => {
-    console.log(data);
-    setIsLoading(true);
-    router.push(Routes.DASHBOARD);
-  };
-
-  return <LoginForm isLoading={isLoading} onLogin={handleLogin} />;
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-10 bg-gradient-to-r from-cyan-500 to-blue-500">
+      <h5 className="text-4xl font-bold text-white">Learnninja</h5>
+      <LoginForm />
+    </div>
+  );
 };
 
 export default SignInPage;
