@@ -7,6 +7,7 @@ class ApiService {
   constructor() {
     this.axiosInstance = axios.create({
       baseURL: process.env.NEXT_PUBLIC_API_URL,
+      withCredentials: true,
     });
 
     this.axiosInstance.interceptors.response.use((config) => {

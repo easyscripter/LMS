@@ -12,6 +12,7 @@ import { useToast } from '../ui/use-toast';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '../ui/spinner';
 import { AxiosError } from 'axios';
+import { Routes } from '@/enums';
 
 export const LoginForm = () => {
   const { toast } = useToast();
@@ -33,7 +34,7 @@ export const LoginForm = () => {
     try {
       const response = await loginMutation.mutateAsync(data);
       if (response.user) {
-        router.push('/');
+        router.push(Routes.DASHBOARD);
       }
     } catch (e) {
       const error = e as Error | AxiosError;
