@@ -1,5 +1,5 @@
-import { AuthResponse } from '@/types';
-import { getAccessToken, removeAccessTokenFromCookie, saveAccessTokenToCookie } from '@/utils';
+import { AuthResponse, User, UserCoursesResponse } from '@/types';
+import { getAccessToken, removeTokensFromCookies, saveAccessTokenToCookie } from '@/utils';
 import axios, { AxiosInstance } from 'axios';
 class ApiService {
   private axiosInstance: AxiosInstance;
@@ -10,7 +10,7 @@ class ApiService {
       withCredentials: true,
     });
 
-    this.axiosInstance.interceptors.response.use((config) => {
+    this.axiosInstance.interceptors.request.use((config) => {
       const accessToken = getAccessToken();
       if (config?.headers && accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -28,7 +28,7 @@ class ApiService {
             await this.getNewTokens();
             return this.axiosInstance(originalRequest);
           } catch (error) {
-            removeAccessTokenFromCookie();
+            removeTokensFromCookies();
           }
         }
         throw error;
@@ -50,6 +50,14 @@ class ApiService {
 
   async logout() {
     return (await this.axiosInstance.post<boolean>('/auth/logout')).data;
+  }
+
+  async getUser() {
+    return (await this.axiosInstance.get<User>('/user/profile')).data;
+  }
+
+  async getUserCourses() {
+    return (await this.axiosInstance.get<UserCoursesResponse>('/user/courses')).data;
   }
 }
 
